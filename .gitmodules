@@ -1,0 +1,4 @@
+[submodule "assets/Taktische-Zeichen"]
+	path = assets/Taktische-Zeichen
+	url = git@github.com:neo-hornberger/Taktische-Zeichen.git
+	branch = templates
