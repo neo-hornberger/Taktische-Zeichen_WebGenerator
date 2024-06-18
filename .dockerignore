@@ -1,0 +1,14 @@
+Dockerfile
+.dockerignore
+
+.dart_tool/
+.idea/
+build/
+linux/
+test/
+.flutter-plugins
+.flutter-plugins-dependencies
+.gitignore
+.gitmodules
+README.md
+*.iml
