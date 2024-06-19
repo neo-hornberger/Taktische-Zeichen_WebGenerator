@@ -14,7 +14,13 @@ import '../../models/vehicle.dart';
 import '../../models/symbol.dart';
 
 class JinjaServer extends JinjaService {
-  final Uri baseUrl = Uri.parse('http://localhost:9000');
+  JinjaServer()
+      : baseUrl = Uri.parse(const String.fromEnvironment(
+          'JINJA_URL',
+          defaultValue: 'http://localhost:9000',
+        ));
+
+  final Uri baseUrl;
 
   @override
   Future<bool> preloadTemplates(BuildContext context) async {

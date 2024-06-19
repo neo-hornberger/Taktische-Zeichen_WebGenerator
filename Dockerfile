@@ -4,6 +4,7 @@ FROM debian:stable-slim AS build-env
 
 ARG FLUTTER_SDK=/usr/local/flutter
 ARG FLUTTER_VERSION=3.22.1
+ARG JINJA_URL=http://localhost:9000
 
 RUN apt-get update
 RUN apt-get install -y curl git unzip
@@ -20,7 +21,7 @@ COPY . .
 
 RUN flutter clean
 RUN flutter pub get
-RUN flutter build web
+RUN flutter build web --dart-define=JINJA_URL=${JINJA_URL}
 
 
 FROM nginx:alpine-slim
