@@ -14,17 +14,24 @@ import '../../models/vehicle.dart';
 import '../../models/symbol.dart';
 
 class JinjaServer extends JinjaService {
-  JinjaServer()
-      : baseUrl = Uri.parse(const String.fromEnvironment(
-          'JINJA_URL',
-          defaultValue: 'http://localhost:9000',
-        ));
+  JinjaServer() {
+    String url = const String.fromEnvironment(
+      'JINJA_URL',
+      defaultValue: 'http://localhost:9000/',
+    );
 
-  final Uri baseUrl;
+    if (!url.endsWith('/')) {
+      url += '/';
+    }
+
+    _baseUrl = Uri.parse(url);
+  }
+
+  late Uri _baseUrl;
 
   @override
   Future<bool> preloadTemplates(BuildContext context) async {
-    final resp = await http.head(baseUrl.resolve('/status'));
+    final resp = await http.head(_baseUrl.resolve('status'));
 
     return resp.statusCode == 200;
   }
@@ -62,7 +69,7 @@ class JinjaServer extends JinjaService {
         .map((entry) =>
             '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(entry.value.toString())}')
         .join('&');
-    final resp = await http.get(baseUrl.resolve('/build?$params'));
+    final resp = await http.get(_baseUrl.resolve('build?$params'));
 
     if (resp.statusCode != 200) {
       throw resp.body;
