@@ -12,6 +12,8 @@ import '../models/vehicle.dart';
 abstract class JinjaService {
   Future<bool> preloadTemplates(BuildContext context);
   Future<String> buildSymbol(Symbol symbol, SymbolColors theme);
+  Future<Iterable<String>> get librarySymbols;
+  Future<String> buildLibrarySymbol(String symbol);
 }
 
 Map<String, dynamic> extractOptions(Symbol symbol) {

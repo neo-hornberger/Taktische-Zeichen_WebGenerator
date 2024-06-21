@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:jinja/jinja.dart';
 
@@ -45,48 +49,63 @@ class JinjaLocal extends JinjaService {
 
     return template.render();
   }
+
+  @override
+  Future<Iterable<String>> get librarySymbols async => (_env.loader as AssetLoader).getSymbols();
+
+  @override
+  Future<String> buildLibrarySymbol(String symbol) async => _env.getTemplate(symbol).render();
 }
 
 class AssetLoader extends Loader {
+  static final RegExp templateRegex = RegExp(r'assets/Taktische-Zeichen/templates/(.+\.j2t)$');
+  static final RegExp fontsRegex = RegExp(r'assets/Taktische-Zeichen/fonts/(.+\.j2)$');
+  static final RegExp symbolsRegex = RegExp(r'assets/Taktische-Zeichen/symbols/(.+\.j2)$');
+
   final Map<String, String> _templates = {};
+  final Map<String, ByteData?> _symbols = {};
 
   Future<bool> preload(AssetBundle bundle) async {
-    for (var template in [
-      'base.j2t',
-      //
-      'boot.j2t',
-      'einheit.j2t',
-      'fahrzeug.j2t',
-      'führungsstelle.j2t',
-      'gebäude.j2t',
-      'person.j2t',
-      'stelle.j2t',
-    ]) {
+    final Iterable<String> assets = await bundle
+        .loadString('AssetManifest.json')
+        .then(json.decode)
+        .then((assets) => assets.keys);
+
+    _filterAssets(assets, templateRegex).forEach((template) async {
       _templates['templates/$template'] =
           await bundle.loadString('assets/Taktische-Zeichen/templates/$template');
-    }
-    for (var font in [
-      'fonts.j2',
-      //
-      'bundessans.css.j2',
-    ]) {
+    });
+    _filterAssets(assets, fontsRegex).forEach((font) async {
       _templates['./fonts/$font'] = await bundle.loadString('assets/Taktische-Zeichen/fonts/$font');
-    }
+    });
+
+    _filterAssets(assets, symbolsRegex).forEach((symbol) async {
+      _symbols[symbol] = await bundle.load('assets/Taktische-Zeichen/symbols/$symbol');
+    });
 
     return true;
   }
 
   @override
   String getSource(String path) {
-    if (!_templates.containsKey(path)) {
-      throw TemplateNotFound(name: path);
+    if (path.startsWith('symbols/')) {
+      path = path.substring(8);
+
+      if (_symbols.containsKey(path)) {
+        return _decode(_symbols[path]!);
+      }
+    } else if (_templates.containsKey(path)) {
+      return _templates[path]!;
     }
 
-    return _templates[path]!;
+    throw TemplateNotFound(name: path);
   }
 
   @override
-  List<String> listTemplates() => _templates.keys.toList();
+  List<String> listTemplates() => [
+        ..._templates.keys,
+        ..._symbols.keys,
+      ];
 
   @override
   Template load(Environment environment, String path, {Map<String, Object?>? globals}) {
@@ -95,5 +114,18 @@ class AssetLoader extends Loader {
       path: path,
       globals: globals,
     );
+  }
+
+  Iterable<String> getSymbols() => _symbols.keys;
+
+  String _decode(ByteData data) => utf8.decode(Uint8List.sublistView(data));
+}
+
+Iterable<String> _filterAssets(Iterable<String> assets, RegExp regex) sync* {
+  for (final asset in assets) {
+    final match = regex.matchAsPrefix(asset);
+    if (match != null) {
+      yield match.group(1)!;
+    }
   }
 }

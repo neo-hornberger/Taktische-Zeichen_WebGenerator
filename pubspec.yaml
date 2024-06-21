@@ -31,6 +31,48 @@ flutter:
     - assets/
     - assets/Taktische-Zeichen/templates/
     - assets/Taktische-Zeichen/fonts/
+    - assets/Taktische-Zeichen/symbols/
+    - assets/Taktische-Zeichen/symbols/Bundeswehr_Einheiten/
+    - assets/Taktische-Zeichen/symbols/Bundeswehr_Fahrzeuge/
+    - assets/Taktische-Zeichen/symbols/Bundeswehr_Personen/
+    - assets/Taktische-Zeichen/symbols/Einheiten/
+    - assets/Taktische-Zeichen/symbols/Einrichtungen/
+    - assets/Taktische-Zeichen/symbols/Fahrzeuge/
+    - assets/Taktische-Zeichen/symbols/Fernmeldewesen/
+    - assets/Taktische-Zeichen/symbols/Feuerwehr_Einheiten/
+    - assets/Taktische-Zeichen/symbols/Feuerwehr_Fahrzeuge/
+    - assets/Taktische-Zeichen/symbols/Feuerwehr_Gebäude/
+    - assets/Taktische-Zeichen/symbols/Feuerwehr_Personen/
+    - assets/Taktische-Zeichen/symbols/Führungsstellen/
+    - assets/Taktische-Zeichen/symbols/Gebäude/
+    - assets/Taktische-Zeichen/symbols/Gefahren/
+    - assets/Taktische-Zeichen/symbols/Katastrophenschutz_Einheiten/
+    - assets/Taktische-Zeichen/symbols/Kommunal_Fahrzeuge/
+    - assets/Taktische-Zeichen/symbols/Maßnahmen/
+    - assets/Taktische-Zeichen/symbols/Personen/
+    - assets/Taktische-Zeichen/symbols/Polizei_Einheiten/
+    - assets/Taktische-Zeichen/symbols/Polizei_Fahrzeuge/
+    - assets/Taktische-Zeichen/symbols/Rettungswesen_Einheiten/
+    - assets/Taktische-Zeichen/symbols/Rettungswesen_Einrichtungen/
+    - assets/Taktische-Zeichen/symbols/Rettungswesen_Fahrzeuge/
+    - assets/Taktische-Zeichen/symbols/Rettungswesen_Personen/
+    - assets/Taktische-Zeichen/symbols/Schäden/
+    - assets/Taktische-Zeichen/symbols/Schadenskonten/
+    - assets/Taktische-Zeichen/symbols/Schadenskonten/gelb/
+    - assets/Taktische-Zeichen/symbols/Schadenskonten/rot/
+    - assets/Taktische-Zeichen/symbols/Schadenskonten/weiß/
+    - assets/Taktische-Zeichen/symbols/Sonstiges/
+    - assets/Taktische-Zeichen/symbols/THW_Einheiten/
+    - assets/Taktische-Zeichen/symbols/THW_Einheiten/ÖGA/
+    - assets/Taktische-Zeichen/symbols/THW_Einheiten/SysBR500/
+    - assets/Taktische-Zeichen/symbols/THW_Einrichtungen/
+    - assets/Taktische-Zeichen/symbols/THW_Fahrzeuge/
+    - assets/Taktische-Zeichen/symbols/THW_Führungsstellen/
+    - assets/Taktische-Zeichen/symbols/THW_Gebäude/
+    - assets/Taktische-Zeichen/symbols/THW_Personen/
+    - assets/Taktische-Zeichen/symbols/Wasserrettung_Einheiten/
+    - assets/Taktische-Zeichen/symbols/Zoll_Einheiten/
+    - assets/Taktische-Zeichen/symbols/Zoll_Fahrzeuge/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -37,6 +37,17 @@ class JinjaServer extends JinjaService {
   }
 
   @override
+  Future<Iterable<String>> get librarySymbols async {
+    final resp = await http.get(_baseUrl.resolve('library'));
+
+    if (resp.statusCode != 200) {
+      throw resp.body;
+    }
+
+    return (json.decode(resp.body) as Iterable).whereType<String>();
+  }
+
+  @override
   Future<String> buildSymbol(Symbol symbol, SymbolColors theme) async {
     String template;
     if (symbol is Unit) {
@@ -74,6 +85,17 @@ class JinjaServer extends JinjaService {
     if (resp.statusCode != 200) {
       throw resp.body;
     }
-    return resp.body;
+    return utf8.decode(resp.bodyBytes);
+  }
+
+  @override
+  Future<String> buildLibrarySymbol(String symbol) async {
+    final resp = await http.get(_baseUrl.resolve('library?symbol=${Uri.encodeQueryComponent(symbol)}'));
+
+    if (resp.statusCode != 200) {
+      throw resp.body;
+    }
+
+    return utf8.decode(resp.bodyBytes);
   }
 }
