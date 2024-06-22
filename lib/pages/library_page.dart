@@ -49,8 +49,6 @@ class LibraryPageState extends State<LibraryPage> {
 
   @override
   Widget build(BuildContext context) {
-    const double searchBoxPadding = 8.0;
-
     return Column(
       children: [
         Container(
@@ -99,15 +97,17 @@ class LibraryPageState extends State<LibraryPage> {
                           final symbol = LibrarySymbol.parse(_filteredSymbols.elementAt(index));
                           Uint8List bytes = Uint8List(0);
 
-                          return GestureDetector(
-                            onTap: () => showDialog(
-                              context: context,
-                              builder: (context) => SaveDialog.fromLibrarySymbol(
-                                symbol: symbol,
-                                bytes: bytes,
+                          return Card(
+                            shape: cardBorder,
+                            child: InkWell(
+                              customBorder: cardBorder,
+                              onTap: () => showDialog(
+                                context: context,
+                                builder: (context) => SaveDialog.fromLibrarySymbol(
+                                  symbol: symbol,
+                                  bytes: bytes,
+                                ),
                               ),
-                            ),
-                            child: Card(
                               child: Container(
                                 padding: const EdgeInsets.all(8),
                                 child: Column(
@@ -122,7 +122,7 @@ class LibraryPageState extends State<LibraryPage> {
                                       ),
                                       builder: (context, symbol) {
                                         bytes = utf8.encode(symbol!);
-                                        
+
                                         return SizedBox(
                                           width: size * 0.8,
                                           height: size * 0.8,
@@ -172,3 +172,6 @@ class LibraryPageState extends State<LibraryPage> {
         ),
       );
 }
+
+const double searchBoxPadding = 8.0;
+final ShapeBorder cardBorder = RoundedRectangleBorder(borderRadius: BorderRadius.circular(10));
