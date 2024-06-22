@@ -1,3 +1,6 @@
 import 'symbol.dart';
 
-class Building extends Symbol {}
+class Building extends Symbol {
+  @override
+  Symbol copy() => Building()..basecopyFrom(this);
+}

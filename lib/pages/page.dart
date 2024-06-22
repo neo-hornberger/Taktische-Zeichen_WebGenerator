@@ -1,6 +1,6 @@
-import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 
+import '../dialogs/save_dialog.dart';
 import '../services/jinja.dart';
 import '../services/jinja/local.dart';
 import '../services/jinja/server.dart';
@@ -78,36 +78,13 @@ class _MainPageState extends State<MainPage> {
 
   FloatingActionButton? _fab() => switch (_currentPage) {
         Page.editor => FloatingActionButton(
-            onPressed: () async {
-              final theme = Theme.of(context);
-
-              SnackBar snackBar;
-              try {
-                final file = await FileSaver.instance.saveFile(
-                  name: 'symbol.svg',
-                  bytes: _editorKey.currentState?.source,
-                  mimeType: MimeType.custom,
-                  customMimeType: 'image/svg+xml',
-                );
-                snackBar = SnackBar(
-                  backgroundColor: theme.colorScheme.primaryContainer,
-                  content: Text(
-                    'Saved to $file',
-                    style: TextStyle(color: theme.colorScheme.onPrimaryContainer),
-                  ),
-                );
-              } catch (e) {
-                snackBar = SnackBar(
-                  backgroundColor: theme.colorScheme.errorContainer,
-                  content: Text(
-                    e.toString(),
-                    style: TextStyle(color: theme.colorScheme.onErrorContainer),
-                  ),
-                );
-              }
-
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            },
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => SaveDialog.fromSymbol(
+                symbol: _editorKey.currentState!.symbol,
+                bytes: _editorKey.currentState!.source!,
+              ),
+            ),
             tooltip: 'Save',
             child: const Icon(Icons.save),
           ),

@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:async_builder/async_builder.dart';
 import 'package:async_builder/init_builder.dart';
-import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -23,7 +22,6 @@ import '../models/unit.dart';
 import '../models/symbol.dart';
 import '../models/vehicle.dart';
 import '../services/jinja.dart';
-import '../services/jinja/server.dart';
 
 class EditorPage extends StatefulWidget {
   const EditorPage({super.key, required this.jinja});
@@ -82,6 +80,7 @@ class EditorPageState extends State<EditorPage> {
 
   Uint8List? _source;
 
+  Symbol get symbol => _symbol.copy();
   Uint8List? get source => _source?.asUnmodifiableView();
 
   @override

@@ -3,6 +3,12 @@ import 'symbol.dart';
 class Vehicle extends Symbol {
   VehicleType? vehicleType;
   String? type;
+
+  @override
+  Symbol copy() => Vehicle()
+    ..basecopyFrom(this)
+    ..vehicleType = vehicleType
+    ..type = type;
 }
 
 enum VehicleType {

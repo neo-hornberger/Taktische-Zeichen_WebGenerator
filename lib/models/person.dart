@@ -7,4 +7,13 @@ class Person extends Symbol {
   UnitSize? unitSize;
   String? type;
   String? subtext;
+
+  @override
+  Symbol copy() => Person()
+    ..basecopyFrom(this)
+    ..isLeader = isLeader
+    ..isSpecialist = isSpecialist
+    ..unitSize = unitSize
+    ..type = type
+    ..subtext = subtext;
 }

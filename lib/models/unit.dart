@@ -6,6 +6,15 @@ class Unit extends Symbol {
   UnitSize? unitSize;
   String? type;
   String? subtext;
+
+  @override
+  Symbol copy() => Unit()
+    ..basecopyFrom(this)
+    ..isLeading = isLeading
+    ..isLogistics = isLogistics
+    ..unitSize = unitSize
+    ..type = type
+    ..subtext = subtext;
 }
 
 enum UnitSize {
