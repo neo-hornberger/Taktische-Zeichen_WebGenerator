@@ -83,6 +83,9 @@ class EditorPageState extends State<EditorPage> {
   Symbol get symbol => _symbol.copy();
   Uint8List? get source => _source?.asUnmodifiableView();
 
+  set symbolColor(SymbolColors value) => setState(() => _symbolColor = value);
+  set symbol(Symbol value) => setState(() => _symbol = value);
+
   @override
   void initState() {
     super.initState();
@@ -140,7 +143,7 @@ class EditorPageState extends State<EditorPage> {
                     ),
                     onChanged: (value) {
                       if (value != null) {
-                        setState(() => _symbolColor = value);
+                        symbolColor = value;
                       }
                     },
                     value: _symbolColor,
@@ -170,7 +173,7 @@ class EditorPageState extends State<EditorPage> {
                     ),
                     onChanged: (value) {
                       if (value != null) {
-                        setState(() => _symbol = value);
+                        symbol = value;
                       }
                     },
                     value: _symbol,
@@ -254,7 +257,7 @@ class EditorPageState extends State<EditorPage> {
           Icon(
             Icons.error,
             size: MediaQuery.of(context).size.shortestSide / 2.0,
-            color: Theme.of(context).colorScheme.errorContainer,
+            color: Theme.of(context).colorScheme.error,
           ),
           Text(message),
         ],

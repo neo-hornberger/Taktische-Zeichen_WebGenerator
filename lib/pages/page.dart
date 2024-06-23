@@ -1,11 +1,19 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../dialogs/save_dialog.dart';
+import '../main.dart';
 import '../services/jinja.dart';
 import '../services/jinja/local.dart';
 import '../services/jinja/server.dart';
 import 'editor_page.dart';
 import 'library_page.dart';
+
+final Uri repositoryUrl =
+    Uri.parse('https://github.com/neo-hornberger/Taktische-Zeichen_WebGenerator');
+final Uri libraryUrl =
+    Uri.parse('https://github.com/neo-hornberger/Taktische-Zeichen/tree/templates');
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key, required this.title});
@@ -18,11 +26,21 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   final GlobalKey<EditorPageState> _editorKey = GlobalKey();
-  final GlobalKey _galleryKey = GlobalKey();
 
   final JinjaService _jinja = JinjaServer();
 
   Page _currentPage = Page.editor;
+
+  void _changeBrightness() {
+    final state = context.findAncestorStateOfType<ApplicationState>()!;
+
+    state.brightness = state.brightness == Brightness.dark ? Brightness.light : Brightness.dark;
+  }
+
+  IconData get brightnessIcon =>
+      context.findAncestorStateOfType<ApplicationState>()!.brightness == Brightness.dark
+          ? Icons.light_mode
+          : Icons.dark_mode;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +48,46 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(
         title: Text(widget.title),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        actions: [
+          IconButton(
+            onPressed: _changeBrightness,
+            icon: Icon(brightnessIcon),
+          ),
+          IconButton(
+            onPressed: () => showAboutDialog(
+              context: context,
+              applicationName: widget.title,
+              applicationVersion: '1.0.0+1',
+              applicationLegalese: 'by Neo Hornberger',
+              children: [
+                const SizedBox(height: 16),
+                Text.rich(TextSpan(
+                  children: [
+                    const WidgetSpan(child: Icon(Icons.code)),
+                    const WidgetSpan(child: SizedBox(width: 10)),
+                    TextSpan(
+                      text: repositoryUrl.toString(),
+                      style: const TextStyle(decoration: TextDecoration.underline),
+                      recognizer: TapGestureRecognizer()..onTap = () => launchUrl(repositoryUrl),
+                    ),
+                  ],
+                )),
+                Text.rich(TextSpan(
+                  children: [
+                    const WidgetSpan(child: Icon(Icons.photo_library_outlined)),
+                    const WidgetSpan(child: SizedBox(width: 10)),
+                    TextSpan(
+                      text: libraryUrl.toString(),
+                      style: const TextStyle(decoration: TextDecoration.underline),
+                      recognizer: TapGestureRecognizer()..onTap = () => launchUrl(libraryUrl),
+                    ),
+                  ],
+                )),
+              ],
+            ),
+            icon: const Icon(Icons.info_outline),
+          ),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -71,7 +129,6 @@ class _MainPageState extends State<MainPage> {
             jinja: _jinja,
           ),
         Page.library => LibraryPage(
-            key: _galleryKey,
             jinja: _jinja,
           ),
       };

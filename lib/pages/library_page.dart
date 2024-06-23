@@ -10,16 +10,19 @@ import '../dialogs/save_dialog.dart';
 import '../models/library_symbol.dart';
 import '../services/jinja.dart';
 
+const double searchBoxPadding = 8.0;
+final ShapeBorder cardBorder = RoundedRectangleBorder(borderRadius: BorderRadius.circular(10));
+
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key, required this.jinja});
 
   final JinjaService jinja;
 
   @override
-  State<LibraryPage> createState() => LibraryPageState();
+  State<LibraryPage> createState() => _LibraryPageState();
 }
 
-class LibraryPageState extends State<LibraryPage> {
+class _LibraryPageState extends State<LibraryPage> {
   Iterable<String> _symbols = [];
   Iterable<String> _filteredSymbols = [];
 
@@ -165,13 +168,10 @@ class LibraryPageState extends State<LibraryPage> {
             Icon(
               Icons.error,
               size: size ?? MediaQuery.of(context).size.shortestSide / 2.0,
-              color: Theme.of(context).colorScheme.errorContainer,
+              color: Theme.of(context).colorScheme.error,
             ),
             Text(message),
           ],
         ),
       );
 }
-
-const double searchBoxPadding = 8.0;
-final ShapeBorder cardBorder = RoundedRectangleBorder(borderRadius: BorderRadius.circular(10));
