@@ -42,13 +42,14 @@ class SaveDialog extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Close'),
         ),
-        IconButton.filled(
+        FilledButton.icon(
           onPressed: () => saveFile(
             context,
             name: '${title.replaceAll(RegExp(r'\s'), '_')}.svg',
             bytes: bytes,
           ),
           icon: const Icon(Icons.save_alt),
+          label: const Text('Save'),
         ),
       ],
     );
