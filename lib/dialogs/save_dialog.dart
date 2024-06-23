@@ -43,7 +43,11 @@ class SaveDialog extends StatelessWidget {
           child: const Text('Close'),
         ),
         IconButton.filled(
-          onPressed: () => saveFile(context, bytes),
+          onPressed: () => saveFile(
+            context,
+            name: '${title.replaceAll(RegExp(r'\s'), '_')}.svg',
+            bytes: bytes,
+          ),
           icon: const Icon(Icons.save_alt),
         ),
       ],
@@ -57,10 +61,24 @@ class SaveDialog extends StatelessWidget {
   })  : title = symbol.name,
         subtitle = symbol.category;
 
-  SaveDialog.fromSymbol({
-    super.key,
+  factory SaveDialog.fromSymbol({
+    Key? key,
     required Symbol symbol,
-    required this.bytes,
-  })  : title = symbol.title ?? symbol.name ?? '',
-        subtitle = null;
+    required Uint8List bytes,
+  }) {
+    String title = 'symbol';
+
+    if (symbol.title != null && symbol.title!.isNotEmpty) {
+      title = symbol.title!;
+    } else if (symbol.name != null && symbol.name!.isNotEmpty) {
+      title = symbol.name!;
+    }
+
+    return SaveDialog(
+      key: key,
+      title: title,
+      subtitle: null,
+      bytes: bytes,
+    );
+  }
 }

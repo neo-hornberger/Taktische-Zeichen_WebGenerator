@@ -3,13 +3,13 @@ import 'dart:typed_data';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 
-void saveFile(BuildContext context, Uint8List? bytes) async {
+void saveFile(BuildContext context, {String? name, Uint8List? bytes}) async {
   final theme = Theme.of(context);
 
   SnackBar snackBar;
   try {
     final file = await FileSaver.instance.saveFile(
-      name: 'symbol.svg',
+      name: name ?? 'symbol.svg',
       bytes: bytes,
       mimeType: MimeType.custom,
       customMimeType: 'image/svg+xml',
