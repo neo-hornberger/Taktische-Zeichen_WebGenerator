@@ -12,8 +12,7 @@ import 'library_page.dart';
 
 final Uri repositoryUrl =
     Uri.parse('https://github.com/neo-hornberger/Taktische-Zeichen_WebGenerator');
-final Uri libraryUrl =
-    Uri.parse('https://github.com/neo-hornberger/Taktische-Zeichen/tree/templates');
+final Uri libraryUrl = Uri.parse('https://github.com/neo-hornberger/Taktische-Zeichen');
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key, required this.title});
