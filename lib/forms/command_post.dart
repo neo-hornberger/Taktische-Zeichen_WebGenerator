@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
-import '../models/unit.dart';
+import '../models/symbol.dart';
 import 'symbol.dart';
 
 class CommandPostForm extends SymbolForm {

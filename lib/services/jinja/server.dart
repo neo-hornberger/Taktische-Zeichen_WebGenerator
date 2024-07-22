@@ -5,12 +5,6 @@ import 'package:http/http.dart' as http;
 
 import '../../models/theme.dart';
 import '../jinja.dart';
-import '../../models/building.dart';
-import '../../models/command_post.dart';
-import '../../models/person.dart';
-import '../../models/post.dart';
-import '../../models/unit.dart';
-import '../../models/vehicle.dart';
 import '../../models/symbol.dart';
 
 class JinjaServer extends JinjaService {
@@ -49,26 +43,17 @@ class JinjaServer extends JinjaService {
 
   @override
   Future<String> buildSymbol(Symbol symbol, SymbolColors theme) async {
-    String template;
-    if (symbol is Unit) {
-      template = 'unit';
-    } else if (symbol is Vehicle) {
-      if (symbol.vehicleType == VehicleType.boot) {
-        template = 'boat';
-      } else {
-        template = 'vehicle';
-      }
-    } else if (symbol is CommandPost) {
-      template = 'command_post';
-    } else if (symbol is Building) {
-      template = 'building';
-    } else if (symbol is Person) {
-      template = 'person';
-    } else if (symbol is Post) {
-      template = 'post';
-    } else {
-      throw Exception('Unknown symbol type');
-    }
+    String template = switch(symbol) {
+      Unit() => 'unit',
+      Vehicle(vehicleType: VehicleType.boot) => 'boat',
+      Vehicle() => 'vehicle',
+      CommandPost() => 'command_post',
+      Building() => 'building',
+      Hazard() => 'hazard',
+      Device() => 'device',
+      Person() => 'person',
+      Post() => 'post',
+    };
 
     final params = {
       ...extractOptions(symbol),

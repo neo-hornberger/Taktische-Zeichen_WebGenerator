@@ -7,13 +7,7 @@ import 'package:jinja/jinja.dart';
 
 import '../../models/theme.dart';
 import '../jinja.dart';
-import '../../models/building.dart';
-import '../../models/command_post.dart';
-import '../../models/person.dart';
-import '../../models/post.dart';
 import '../../models/symbol.dart';
-import '../../models/unit.dart';
-import '../../models/vehicle.dart';
 
 final _env = Environment(
   loader: AssetLoader(),
@@ -26,28 +20,19 @@ class JinjaLocal extends JinjaService {
 
   @override
   Future<String> buildSymbol(Symbol symbol, SymbolColors theme) async {
-    Template template;
-    if (symbol is Unit) {
-      template = _env.getTemplate('templates/einheit.j2t');
-    } else if (symbol case Vehicle v) {
-      if (v.vehicleType == VehicleType.boot) {
-        template = _env.getTemplate('templates/boot.j2t');
-      } else {
-        template = _env.getTemplate('templates/fahrzeug.j2t');
-      }
-    } else if (symbol is CommandPost) {
-      template = _env.getTemplate('templates/führungsstelle.j2t');
-    } else if (symbol is Building) {
-      template = _env.getTemplate('templates/gebäude.j2t');
-    } else if (symbol is Person) {
-      template = _env.getTemplate('templates/person.j2t');
-    } else if (symbol is Post) {
-      template = _env.getTemplate('templates/stelle.j2t');
-    } else {
-      throw Exception('Unknown symbol type');
-    }
+    String template = switch(symbol) {
+      Unit() => 'einheit',
+      Vehicle(vehicleType: VehicleType.boot) => 'boot',
+      Vehicle() => 'fahrzeug',
+      CommandPost() => 'führungsstelle',
+      Building() => 'gebäude',
+      Hazard() => 'gefahr',
+      Device() => 'gerät',
+      Person() => 'person',
+      Post() => 'stelle',
+    };
 
-    return template.render();
+    return _env.getTemplate('templates/$template.j2t').render();
   }
 
   @override

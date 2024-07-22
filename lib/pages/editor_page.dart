@@ -8,19 +8,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../forms/building.dart';
 import '../forms/command_post.dart';
+import '../forms/device.dart';
+import '../forms/hazard.dart';
 import '../forms/person.dart';
 import '../forms/post.dart';
 import '../forms/symbol.dart';
 import '../forms/unit.dart';
 import '../forms/vehicle.dart';
-import '../models/building.dart';
-import '../models/command_post.dart';
-import '../models/person.dart';
-import '../models/post.dart';
 import '../models/theme.dart';
-import '../models/unit.dart';
 import '../models/symbol.dart';
-import '../models/vehicle.dart';
 import '../services/jinja.dart';
 
 class EditorPage extends StatefulWidget {
@@ -73,6 +69,8 @@ class EditorPageState extends State<EditorPage> {
     'Stelle': Post(),
     'Führungsstelle': CommandPost(),
     'Gebäude': Building(),
+    'Gerät': Device(),
+    'Gefahr': Hazard(),
   };
 
   late SymbolColors _symbolColor;
@@ -207,49 +205,45 @@ class EditorPageState extends State<EditorPage> {
         });
       };
 
-  SymbolForm _symbolForm() {
-    if (_symbol case Unit u) {
-      return UnitForm(onChanged: _fieldsChanged((fields) {
-        u.isLeading = fields['isLeading'];
-        u.isLogistics = fields['isLogistics'];
-        u.unitSize = fields['unitSize'];
-        u.type = fields['type'];
-        u.subtext = fields['subtext'];
-      }));
-    }
-    if (_symbol case Person p) {
-      return PersonForm(onChanged: _fieldsChanged((fields) {
-        p.isLeader = fields['isLeader'];
-        p.isSpecialist = fields['isSpecialist'];
-        p.unitSize = fields['unitSize'];
-        p.type = fields['type'];
-        p.subtext = fields['subtext'];
-      }));
-    }
-    if (_symbol case Vehicle v) {
-      return VehicleForm(onChanged: _fieldsChanged((fields) {
-        v.vehicleType = fields['vehicleType'];
-        v.type = fields['type'];
-      }));
-    }
-    if (_symbol case Post p) {
-      return PostForm(onChanged: _fieldsChanged((fields) {
-        p.isLeading = fields['isLeading'];
-        p.isLogistics = fields['isLogistics'];
-        p.isStationary = fields['isStationary'];
-        p.subtext = fields['subtext'];
-      }));
-    }
-    if (_symbol case CommandPost cp) {
-      return CommandPostForm(onChanged: _fieldsChanged((fields) {
-        cp.unitSize = fields['unitSize'];
-      }));
-    }
-    if (_symbol case Building b) {
-      return BuildingForm(onChanged: _fieldsChanged());
-    }
-    throw Exception('Unknown symbol type');
-  }
+  SymbolForm _symbolForm() => switch(_symbol) {
+      (Unit u) => UnitForm(onChanged: _fieldsChanged((fields) {
+            u.isLeading = fields['isLeading'];
+            u.isLogistics = fields['isLogistics'];
+            u.unitSize = fields['unitSize'];
+            u.type = fields['type'];
+            u.subtext = fields['subtext'];
+          })),
+      (Vehicle v) => VehicleForm(onChanged: _fieldsChanged((fields) {
+            v.vehicleType = fields['vehicleType'];
+            v.type = fields['type'];
+          })),
+      (CommandPost cp) => CommandPostForm(onChanged: _fieldsChanged((fields) {
+            cp.unitSize = fields['unitSize'];
+          })),
+      (Building _) => BuildingForm(onChanged: _fieldsChanged()),
+      (Hazard h) => HazardForm(onChanged: _fieldsChanged((fields) {
+            h.color = fields['color'];
+            h.isAcute = fields['isAcute'];
+            h.isPresumed = fields['isPresumed'];
+          })),
+      (Device d) => DeviceForm(onChanged: _fieldsChanged((fields) {
+            d.type = fields['type'];
+            d.subtext = fields['subtext'];
+          })),
+      (Person p) => PersonForm(onChanged: _fieldsChanged((fields) {
+            p.isLeader = fields['isLeader'];
+            p.isSpecialist = fields['isSpecialist'];
+            p.unitSize = fields['unitSize'];
+            p.type = fields['type'];
+            p.subtext = fields['subtext'];
+          })),
+      (Post p) => PostForm(onChanged: _fieldsChanged((fields) {
+            p.isLeading = fields['isLeading'];
+            p.isLogistics = fields['isLogistics'];
+            p.isStationary = fields['isStationary'];
+            p.subtext = fields['subtext'];
+          })),
+    };
 
   Widget _error(BuildContext context, String message) => Column(
         mainAxisAlignment: MainAxisAlignment.center,

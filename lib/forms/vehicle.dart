@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
-import '../models/vehicle.dart';
+import '../models/symbol.dart';
 import 'symbol.dart';
 
 class VehicleForm extends SymbolForm {
