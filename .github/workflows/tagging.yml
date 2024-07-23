@@ -28,10 +28,10 @@ jobs:
             core.info(`Version: ${cyan}${version}${reset}`);
             core.info(`Build: ${cyan}${build_number}${reset}`);
 
-            console.log(await github.git.createRef({
+            await github.rest.git.createRef({
               ref: `refs/tags/${tag}`,
               sha: context.sha
-            }));
+            });
 
             core.setOutput('tag', tag);
       - uses: fischerscode/tagger@v0.2
