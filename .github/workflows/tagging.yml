@@ -26,6 +26,20 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
+            async function updateTag(tag) {
+              return await github.rest.git.updateRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/${tag}`,
+                sha: context.sha
+              }).catch(res => github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/tags/${tag}`,
+                sha: context.sha
+              }));
+            }
+
             const version = '${{ steps.get_version.outputs.result }}';
             const [major, minor, patch] = version.split('.').map(Number);
             const commit = context.sha.substring(0, 7);
@@ -41,21 +55,11 @@ jobs:
                 `${major}.${minor}.${patch}`,
                 `${major}.${minor}`
               ]) {
-                await github.rest.git.updateRef({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  ref: `tags/${tag}`,
-                  sha: context.sha
-                });
+                await updateTag(tag);
                 core.info(`Updated version tag: ${cyan}${tag}${reset}`);
               }
             } else {
               const tag = `${major}.${minor}.${patch}-dev`;
-              await github.rest.git.updateRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: `tags/${tag}`,
-                sha: context.sha
-              });
+              await updateTag(tag);
               core.info(`Updated dev-version tag: ${cyan}${tag}${reset}`);
             }
