@@ -15,4 +15,25 @@ jobs:
         id: get_version
         with:
           cmd: yq '.version' pubspec.yaml
-      - run: echo ${{ steps.get_version.outputs.result }}
+      - uses: actions/github-script@v7
+        id: create_tag
+        with:
+          script: |
+            const version = '${{ steps.get_version.outputs.result }}';
+            const build_number = context.sha.substring(0, 7);
+            const tag = `${version}+${build_number}`;
+
+            const reset = '\u001b[33;0m';
+            const cyan = '\u001b[33;36m';
+            core.info(`Version: ${cyan}${version}${reset}`);
+            core.info(`Build: ${cyan}${build_number}${reset}`);
+
+            console.log(await github.git.createRef({
+              ref: `refs/tags/${tag}`,
+              sha: context.sha
+            }));
+
+            core.setOutput('tag', tag);
+      - uses: fischerscode/tagger@v0.2
+        with:
+          tag: ${{ steps.create_tag.outputs.tag }}
