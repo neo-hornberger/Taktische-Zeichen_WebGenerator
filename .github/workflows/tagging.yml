@@ -5,9 +5,14 @@ permissions:
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        type: boolean
+        description: 'Tag the current commit with the version number'
+        required: false
+        default: false
   push:
-    branches:
-      - master
+    branches: [ master ]
 
 jobs:
   tagging:
@@ -19,26 +24,38 @@ jobs:
         with:
           cmd: yq '.version' pubspec.yaml
       - uses: actions/github-script@v7
-        id: create_tag
         with:
           script: |
             const version = '${{ steps.get_version.outputs.result }}';
-            const build_number = context.sha.substring(0, 7);
-            const tag = `${version}+${build_number}`;
+            const [major, minor, patch] = version.split('.').map(Number);
+            const commit = context.sha.substring(0, 7);
 
             const reset = '\u001b[33;0m';
             const cyan = '\u001b[33;36m';
             core.info(`Version: ${cyan}${version}${reset}`);
-            core.info(`Build: ${cyan}${build_number}${reset}`);
+            core.info(`Commit: ${cyan}${commit}${reset}`);
+            core.info('-'.repeat(80));
 
-            await github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `refs/tags/${tag}`,
-              sha: context.sha
-            });
-
-            core.setOutput('tag', tag);
-      - uses: fischerscode/tagger@v0.2
-        with:
-          tag: ${{ steps.create_tag.outputs.tag }}
+            if (context.eventName === 'workflow_dispatch' && context.payload.inputs.tag === 'true') {
+              for (const tag of [
+                `${major}.${minor}.${patch}`,
+                `${major}.${minor}`
+              ]) {
+                await github.rest.git.updateRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `tags/${tag}`,
+                  sha: context.sha
+                });
+                core.info(`Updated version tag: ${cyan}${tag}${reset}`);
+              }
+            } else {
+              const tag = `${major}.${minor}.${patch}-dev`;
+              await github.rest.git.updateRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/${tag}`,
+                sha: context.sha
+              });
+              core.info(`Updated dev-version tag: ${cyan}${tag}${reset}`);
+            }
