@@ -29,6 +29,8 @@ jobs:
             core.info(`Build: ${cyan}${build_number}${reset}`);
 
             await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               ref: `refs/tags/${tag}`,
               sha: context.sha
             });
