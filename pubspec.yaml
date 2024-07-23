@@ -1,7 +1,7 @@
 name: taktische_zeichen
 description: "Taktische Zeichen WebGenerator"
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.1.0
+version: 1.1.1
 
 environment:
   sdk: '>=3.4.1 <4.0.0'
@@ -19,6 +19,7 @@ dependencies:
   file_saver: ^0.2.13
   url_launcher: ^6.3.0
   form_builder_extra_fields: ^10.2.0
+  package_info_plus: ^8.0.0
 
 dev_dependencies:
   flutter_test:

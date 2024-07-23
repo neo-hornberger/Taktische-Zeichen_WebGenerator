@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../dialogs/save_dialog.dart';
@@ -28,6 +29,8 @@ class _MainPageState extends State<MainPage> {
 
   final JinjaService _jinja = JinjaServer();
 
+  String? _packageVersion;
+
   Page _currentPage = Page.editor;
 
   void _changeBrightness() {
@@ -36,10 +39,17 @@ class _MainPageState extends State<MainPage> {
     state.brightness = state.brightness == Brightness.dark ? Brightness.light : Brightness.dark;
   }
 
-  IconData get brightnessIcon =>
+  IconData get _brightnessIcon =>
       context.findAncestorStateOfType<ApplicationState>()!.brightness == Brightness.dark
           ? Icons.light_mode
           : Icons.dark_mode;
+  
+  @override
+  void initState() {
+    super.initState();
+
+    PackageInfo.fromPlatform().then((info) => setState(() => _packageVersion = info.version));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +60,13 @@ class _MainPageState extends State<MainPage> {
         actions: [
           IconButton(
             onPressed: _changeBrightness,
-            icon: Icon(brightnessIcon),
+            icon: Icon(_brightnessIcon),
           ),
           IconButton(
             onPressed: () => showAboutDialog(
               context: context,
               applicationName: widget.title,
-              applicationVersion: '1.0.0+1',
+              applicationVersion: _packageVersion ?? 'unknown',
               applicationLegalese: 'by Neo Hornberger',
               children: [
                 const SizedBox(height: 16),
