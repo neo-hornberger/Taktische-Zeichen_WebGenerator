@@ -53,6 +53,7 @@ class JinjaServer extends JinjaService {
       Device() => 'device',
       Person() => 'person',
       Post() => 'post',
+      CommunicationsCondition() => 'communications_condition',
     };
 
     final params = {

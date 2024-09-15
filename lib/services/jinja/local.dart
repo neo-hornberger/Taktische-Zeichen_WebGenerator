@@ -20,7 +20,7 @@ class JinjaLocal extends JinjaService {
 
   @override
   Future<String> buildSymbol(Symbol symbol, SymbolColors theme) async {
-    String template = switch(symbol) {
+    String template = switch (symbol) {
       Unit() => 'einheit',
       Vehicle(vehicleType: VehicleType.boot) => 'boot',
       Vehicle() => 'fahrzeug',
@@ -30,6 +30,7 @@ class JinjaLocal extends JinjaService {
       Device() => 'gerät',
       Person() => 'person',
       Post() => 'stelle',
+      CommunicationsCondition() => 'fernmeldewesen_bedingung',
     };
 
     return _env.getTemplate('templates/$template.j2t').render();

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 sealed class Symbol {
@@ -143,4 +142,37 @@ class Post extends Symbol {
     ..isLogistics = isLogistics
     ..isStationary = isStationary
     ..subtext = subtext;
+}
+
+class CommunicationsCondition extends Symbol {
+  String? medium;
+  CommunicationsMediumType? mediumType;
+
+  @override
+  Symbol copy() => CommunicationsCondition()
+    ..basecopyFrom(this)
+    ..medium = medium
+    ..mediumType = mediumType;
+}
+
+enum CommunicationsMediumType {
+  bild('Bild'),
+  bildfunk('Bild, Funk'),
+  daten('Daten'),
+  datenfunk('Daten, Funk'),
+  datenfernsprech('Daten, Fernsprech'),
+  digitaler_sprechfunk('Sprechfunk, digital'),
+  fernschreiben('Fernschreiben'),
+  fernschreibfunk('Fernschreiben, Funk'),
+  fernsprechen('Fernsprechen'),
+  sprechfunk('Fernsprechen, Funk'),
+  festbild('Festbild'),
+  festbildfunk('Festbild, Funk'),
+  relaisfunk('Relaisfunk'),
+  tasten('Tasten'),
+  tasten_funk('Tasten, Funk');
+
+  const CommunicationsMediumType(this.repr);
+
+  final String repr;
 }

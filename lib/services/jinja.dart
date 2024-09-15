@@ -49,6 +49,9 @@ Map<String, dynamic> extractOptions(Symbol symbol) {
       options['is_logistics'] = symbol.isLogistics;
       options['is_stationary'] = symbol.isStationary;
       options['subtext'] = symbol.subtext;
+    case CommunicationsCondition():
+      options['medium_type'] = symbol.mediumType;
+      options['medium'] = symbol.medium;
   }
 
   return options;
