@@ -17,7 +17,7 @@ Map<String, dynamic> extractOptions(Symbol symbol) {
   options['name'] = symbol.name;
   options['organisation'] = symbol.organisation;
 
-  switch(symbol) {
+  switch (symbol) {
     case Unit():
       options['is_leading'] = symbol.isLeading;
       options['is_logistics'] = symbol.isLogistics;
@@ -50,7 +50,7 @@ Map<String, dynamic> extractOptions(Symbol symbol) {
       options['is_stationary'] = symbol.isStationary;
       options['subtext'] = symbol.subtext;
     case CommunicationsCondition():
-      options['medium_type'] = symbol.mediumType;
+      options['medium_type'] = symbol.mediumType?.repr;
       options['medium'] = symbol.medium;
   }
 
