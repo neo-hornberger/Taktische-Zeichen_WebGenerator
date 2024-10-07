@@ -30,39 +30,7 @@ class EditorPage extends StatefulWidget {
 }
 
 class EditorPageState extends State<EditorPage> {
-  final _symbolColors = <String, SymbolColors>{
-    'Default': SymbolColors(),
-    'Bundeswehr': SymbolColors(
-      primary: const Color(0xff996633),
-      secondary: const Color(0xffffffff),
-      stroke: const Color(0xff000000),
-    ),
-    'Feuerwehr': SymbolColors(
-      primary: const Color(0xffff0000),
-      secondary: const Color(0xffffffff),
-      stroke: const Color(0xff000000),
-    ),
-    'Führung': SymbolColors(
-      primary: const Color(0xffffff00),
-      secondary: const Color(0xff000000),
-      stroke: const Color(0xff000000),
-    ),
-    'Katastrophenschutz': SymbolColors(
-      primary: const Color(0xffdf6711),
-      secondary: const Color(0xffffffff),
-      stroke: const Color(0xff000000),
-    ),
-    'Polizei': SymbolColors(
-      primary: const Color(0xff13a538),
-      secondary: const Color(0xffffffff),
-      stroke: const Color(0xff000000),
-    ),
-    'THW': SymbolColors(
-      primary: const Color(0xff003399),
-      secondary: const Color(0xffffffff),
-      stroke: const Color(0xff000000),
-    ),
-  };
+  final _symbolTheme = SymbolTheme.DEFAULT;
   final _symbols = <String, Symbol>{
     'Einheit': Unit(),
     'Person': Person(),
@@ -75,7 +43,8 @@ class EditorPageState extends State<EditorPage> {
     'Fernmeldewesen Bedingung': CommunicationsCondition(),
   };
 
-  late SymbolColors _symbolColor;
+  late Map<String, SymbolColorScheme> _symbolSchemes;
+  late SymbolColorScheme _symbolScheme;
   late Symbol _symbol;
 
   Uint8List? _source;
@@ -83,13 +52,14 @@ class EditorPageState extends State<EditorPage> {
   Symbol get symbol => _symbol.copy();
   Uint8List? get source => _source?.asUnmodifiableView();
 
-  set symbolColor(SymbolColors value) => setState(() => _symbolColor = value);
+  set symbolColor(SymbolColorScheme value) => setState(() => _symbolScheme = value);
   set symbol(Symbol value) => setState(() => _symbol = value);
 
   @override
   void initState() {
     super.initState();
-    _symbolColor = _symbolColors.values.first;
+    _symbolSchemes = _symbolTheme.schemes;
+    _symbolScheme = _symbolTheme.default_;
     _symbol = _symbols.values.first;
   }
 
@@ -113,7 +83,7 @@ class EditorPageState extends State<EditorPage> {
                     }
 
                     return AsyncBuilder(
-                      future: widget.jinja.buildSymbol(_symbol, _symbolColor),
+                      future: widget.jinja.buildSymbol(_symbol, _symbolScheme),
                       waiting: (context) => const CircularProgressIndicator(),
                       builder: (context, data) => SvgPicture.memory(
                         _source = utf8.encode(data!),
@@ -136,31 +106,31 @@ class EditorPageState extends State<EditorPage> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  DropdownButtonFormField<SymbolColors>(
+                  DropdownButtonFormField<SymbolColorScheme>(
                     isExpanded: true,
                     decoration: const InputDecoration(
-                      labelText: 'Theme',
+                      labelText: 'Scheme',
                     ),
                     onChanged: (value) {
                       if (value != null) {
                         symbolColor = value;
                       }
                     },
-                    value: _symbolColor,
-                    items: _symbolColors.entries
-                        .map((entry) => DropdownMenuItem(
-                              value: entry.value,
+                    value: _symbolScheme,
+                    items: _symbolSchemes.values
+                        .map((scheme) => DropdownMenuItem(
+                              value: scheme,
                               child: Row(
                                 children: [
                                   SvgPicture.string('''
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                      <circle cx="10" cy="10" r="10" fill="${entry.value.stroke.toCSS()}"/>
-                                      <circle cx="10" cy="10" r="8" fill="${entry.value.secondary.toCSS()}"/>
-                                      <circle cx="10" cy="10" r="6" fill="${entry.value.primary.toCSS()}"/>
+                                      <circle cx="10" cy="10" r="10" fill="${scheme.stroke.toCSS()}"/>
+                                      <circle cx="10" cy="10" r="8" fill="${scheme.secondary.toCSS()}"/>
+                                      <circle cx="10" cy="10" r="6" fill="${scheme.primary.toCSS()}"/>
                                     </svg>
                                   '''),
                                   const SizedBox(width: 8),
-                                  Text(entry.key),
+                                  Text(scheme.name),
                                 ],
                               ),
                             ))

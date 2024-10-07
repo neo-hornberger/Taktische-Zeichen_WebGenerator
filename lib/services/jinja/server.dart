@@ -42,7 +42,7 @@ class JinjaServer extends JinjaService {
   }
 
   @override
-  Future<String> buildSymbol(Symbol symbol, SymbolColors theme) async {
+  Future<String> buildSymbol(Symbol symbol, SymbolColorScheme scheme) async {
     String template = switch(symbol) {
       Unit() => 'unit',
       Vehicle(vehicleType: VehicleType.boot) => 'boat',
@@ -59,7 +59,7 @@ class JinjaServer extends JinjaService {
     final params = {
       ...extractOptions(symbol),
       'template': template,
-      'theme': json.encode(theme),
+      'scheme': json.encode(scheme),
     }
         .entries
         .where((entry) => entry.value != null)

@@ -5,7 +5,7 @@ import '../models/theme.dart';
 
 abstract class JinjaService {
   Future<bool> preloadTemplates(BuildContext context);
-  Future<String> buildSymbol(Symbol symbol, SymbolColors theme);
+  Future<String> buildSymbol(Symbol symbol, SymbolColorScheme scheme);
   Future<Iterable<String>> get librarySymbols;
   Future<String> buildLibrarySymbol(String symbol);
 }

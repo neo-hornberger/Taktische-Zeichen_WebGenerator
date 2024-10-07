@@ -19,7 +19,7 @@ class JinjaLocal extends JinjaService {
       await (_env.loader as AssetLoader).preload(DefaultAssetBundle.of(context));
 
   @override
-  Future<String> buildSymbol(Symbol symbol, SymbolColors theme) async {
+  Future<String> buildSymbol(Symbol symbol, SymbolColorScheme scheme) async {
     String template = switch (symbol) {
       Unit() => 'einheit',
       Vehicle(vehicleType: VehicleType.boot) => 'boot',
