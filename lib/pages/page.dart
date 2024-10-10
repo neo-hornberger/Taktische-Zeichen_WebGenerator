@@ -10,6 +10,7 @@ import '../services/jinja/local.dart';
 import '../services/jinja/server.dart';
 import 'editor_page.dart';
 import 'library_page.dart';
+import 'settings_page.dart';
 
 final Uri repositoryUrl =
     Uri.parse('https://github.com/neo-hornberger/Taktische-Zeichen_WebGenerator');
@@ -27,11 +28,13 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final GlobalKey<EditorPageState> _editorKey = GlobalKey();
 
-  final JinjaService _jinja = JinjaServer();
-
+  late JinjaService _jinja;
   String? _packageVersion;
-
   Page _currentPage = Page.editor;
+
+  set _jinjaServer(String url) {
+    setState(() => _jinja = JinjaServer(url));
+  }
 
   void _changeBrightness() {
     final state = context.findAncestorStateOfType<ApplicationState>()!;
@@ -43,10 +46,28 @@ class _MainPageState extends State<MainPage> {
       context.findAncestorStateOfType<ApplicationState>()!.brightness == Brightness.dark
           ? Icons.light_mode
           : Icons.dark_mode;
-  
+
   @override
   void initState() {
     super.initState();
+
+    final state = context.findAncestorStateOfType<ApplicationState>()!;
+
+    bool useJinjaServer = state.settings.jinjaServerEnabled.value;
+    if (useJinjaServer) {
+      _jinjaServer = state.settings.jinjaServerUrl.value;
+    } else {
+      setState(() => _jinja = JinjaLocal());
+    }
+
+    state.settings.jinjaServerEnabled.addListener(() {
+      if (state.settings.jinjaServerEnabled.value) {
+        _jinjaServer = state.settings.jinjaServerUrl.value;
+      } else {
+        setState(() => _jinja = JinjaLocal());
+      }
+    });
+    state.settings.jinjaServerUrl.addListener(() => _jinjaServer = state.settings.jinjaServerUrl.value);
 
     PackageInfo.fromPlatform().then((info) => setState(() => _packageVersion = info.version));
   }
@@ -124,6 +145,12 @@ class _MainPageState extends State<MainPage> {
                     Navigator.pop(context);
                   },
                 )),
+            const Divider(),
+            ListTile(
+              title: const Text('Settings'),
+              leading: const Icon(Icons.settings),
+              onTap: _openSettings,
+            ),
           ],
         ),
       ),
@@ -156,6 +183,15 @@ class _MainPageState extends State<MainPage> {
           ),
         Page.library => null,
       };
+
+  void _openSettings() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SettingsPage(),
+      ),
+    );
+  }
 }
 
 enum Page {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'models/settings.dart';
 import 'pages/page.dart';
 
 void main() {
@@ -17,6 +18,8 @@ class Application extends StatefulWidget {
 }
 
 class ApplicationState extends State<Application> {
+  final Settings settings = Settings();
+
   Brightness _brightness = Brightness.dark;
 
   Brightness get brightness => _brightness;

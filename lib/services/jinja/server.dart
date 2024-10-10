@@ -8,12 +8,7 @@ import '../jinja.dart';
 import '../../models/symbol.dart';
 
 class JinjaServer extends JinjaService {
-  JinjaServer() {
-    String url = const String.fromEnvironment(
-      'JINJA_URL',
-      defaultValue: 'http://localhost:9000/',
-    );
-
+  JinjaServer(String url) {
     if (!url.endsWith('/')) {
       url += '/';
     }
@@ -43,7 +38,7 @@ class JinjaServer extends JinjaService {
 
   @override
   Future<String> buildSymbol(Symbol symbol, SymbolColorScheme scheme) async {
-    String template = switch(symbol) {
+    String template = switch (symbol) {
       Unit() => 'unit',
       Vehicle(vehicleType: VehicleType.boot) => 'boat',
       Vehicle() => 'vehicle',
@@ -76,7 +71,8 @@ class JinjaServer extends JinjaService {
 
   @override
   Future<String> buildLibrarySymbol(String symbol) async {
-    final resp = await http.get(_baseUrl.resolve('library?symbol=${Uri.encodeQueryComponent(symbol)}'));
+    final resp =
+        await http.get(_baseUrl.resolve('library?symbol=${Uri.encodeQueryComponent(symbol)}'));
 
     if (resp.statusCode != 200) {
       throw resp.body;
