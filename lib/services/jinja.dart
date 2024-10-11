@@ -7,7 +7,8 @@ abstract class JinjaService {
   Future<bool> preloadTemplates(BuildContext context);
   Future<String> buildSymbol(Symbol symbol, SymbolColorScheme scheme);
   Future<Iterable<String>> get librarySymbols;
-  Future<String> buildLibrarySymbol(String symbol);
+  Future<Iterable<String>> get libraryThemes;
+  Future<String> buildLibrarySymbol(String symbol, [String? theme]);
 }
 
 Map<String, dynamic> extractOptions(Symbol symbol) {

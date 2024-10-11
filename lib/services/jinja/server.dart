@@ -33,7 +33,18 @@ class JinjaServer extends JinjaService {
       throw resp.body;
     }
 
-    return (json.decode(resp.body) as Iterable).whereType<String>();
+    return (json.decode(resp.body)['symbols'] as Iterable).whereType<String>();
+  }
+
+  @override
+  Future<Iterable<String>> get libraryThemes async {
+    final resp = await http.get(_baseUrl.resolve('library'));
+
+    if (resp.statusCode != 200) {
+      throw resp.body;
+    }
+
+    return (json.decode(resp.body)['themes'] as Iterable).whereType<String>();
   }
 
   @override
@@ -51,16 +62,11 @@ class JinjaServer extends JinjaService {
       CommunicationsCondition() => 'communications_condition',
     };
 
-    final params = {
+    final params = urlParameters({
       ...extractOptions(symbol),
       'template': template,
       'scheme': json.encode(scheme),
-    }
-        .entries
-        .where((entry) => entry.value != null)
-        .map((entry) =>
-            '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(entry.value.toString())}')
-        .join('&');
+    });
     final resp = await http.get(_baseUrl.resolve('build?$params'));
 
     if (resp.statusCode != 200) {
@@ -70,9 +76,12 @@ class JinjaServer extends JinjaService {
   }
 
   @override
-  Future<String> buildLibrarySymbol(String symbol) async {
-    final resp =
-        await http.get(_baseUrl.resolve('library?symbol=${Uri.encodeQueryComponent(symbol)}'));
+  Future<String> buildLibrarySymbol(String symbol, [String? theme]) async {
+    final params = urlParameters({
+      'symbol': symbol,
+      'theme': theme,
+    });
+    final resp = await http.get(_baseUrl.resolve('library?$params'));
 
     if (resp.statusCode != 200) {
       throw resp.body;
@@ -80,4 +89,12 @@ class JinjaServer extends JinjaService {
 
     return utf8.decode(resp.bodyBytes);
   }
+}
+
+String urlParameters(Map<String, dynamic> params) {
+  return params.entries
+      .where((entry) => entry.value != null)
+      .map((entry) =>
+          '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(entry.value.toString())}')
+      .join('&');
 }

@@ -24,16 +24,21 @@ class LibraryPage extends StatefulWidget {
 
 class _LibraryPageState extends State<LibraryPage> {
   Iterable<String> _symbols = [];
+  Iterable<String> _themes = [];
+
   Iterable<String> _filteredSymbols = [];
+  String? _theme;
 
   Future<bool> _preloadTemplates(BuildContext context) async {
     final result = await widget.jinja.preloadTemplates(context);
 
     if (result) {
       final symbols = await widget.jinja.librarySymbols;
+      final themes = await widget.jinja.libraryThemes;
 
       setState(() {
         _symbols = symbols;
+        _themes = themes;
         _filteredSymbols = symbols;
       });
     }
@@ -57,18 +62,60 @@ class _LibraryPageState extends State<LibraryPage> {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(searchBoxPadding),
-          child: SearchBar(
-            leading: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: searchBoxPadding),
-                child: Icon(Icons.search)),
-            trailing: [
-              Text(
-                '${_filteredSymbols.length} / ${_symbols.length}',
-                style: Theme.of(context).textTheme.labelSmall,
+          child: Row(
+            children: [
+              Expanded(
+                child: SearchBar(
+                  leading: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: searchBoxPadding),
+                    child: Icon(Icons.search),
+                  ),
+                  trailing: [
+                    Text(
+                      '${_filteredSymbols.length} / ${_symbols.length}',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    const SizedBox(width: searchBoxPadding),
+                  ],
+                  onChanged: _filterSymbols,
+                ),
               ),
               const SizedBox(width: searchBoxPadding),
+              IconButton(
+                icon: const Icon(Icons.palette),
+                style: IconButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                  foregroundColor: Theme.of(context).colorScheme.onSurface,
+                  shadowColor: Theme.of(context).colorScheme.shadow,
+                  elevation: 6.0,
+                ),
+                constraints: const BoxConstraints(minWidth: 56.0, minHeight: 56.0),
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => SimpleDialog(
+                    title: const Text('Select theme'),
+                    contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 24.0),
+                    children: _themes.map((theme) {
+                      return SimpleDialogOption(
+                        onPressed: () {
+                          setState(() {
+                            _theme = theme;
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          theme,
+                          style: TextStyle(
+                            inherit: true,
+                            color: theme == _theme ? Theme.of(context).colorScheme.primaryFixedDim : null,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
             ],
-            onChanged: _filterSymbols,
           ),
         ),
         Expanded(
@@ -116,7 +163,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                 child: Column(
                                   children: [
                                     AsyncBuilder(
-                                      future: widget.jinja.buildLibrarySymbol(symbol.path),
+                                      future: widget.jinja.buildLibrarySymbol(symbol.path, _theme),
                                       waiting: (context) => Container(
                                         padding: EdgeInsets.all(size / 4),
                                         width: size * 0.8,
