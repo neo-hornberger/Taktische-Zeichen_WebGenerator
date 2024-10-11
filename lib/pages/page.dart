@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -174,7 +176,7 @@ class _MainPageState extends State<MainPage> {
               context: context,
               builder: (context) => SaveDialog.fromSymbol(
                 symbol: _editorKey.currentState!.symbol,
-                bytes: _editorKey.currentState!.source!,
+                bytes: Uint8List.fromList(_editorKey.currentState!.source!),
               ),
             ),
             tooltip: 'Save',
