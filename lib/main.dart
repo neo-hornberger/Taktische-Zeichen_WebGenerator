@@ -20,10 +20,12 @@ class Application extends StatefulWidget {
 class ApplicationState extends State<Application> {
   final Settings settings = Settings();
 
-  Brightness _brightness = Brightness.dark;
+  @override
+  void initState() {
+    super.initState();
 
-  Brightness get brightness => _brightness;
-  set brightness(Brightness value) => setState(() => _brightness = value);
+    settings.brightness.addListener(() => setState(() {}));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class ApplicationState extends State<Application> {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF003399),
-          brightness: _brightness,
+          brightness: settings.brightness.value,
         ),
         useMaterial3: true,
       ),

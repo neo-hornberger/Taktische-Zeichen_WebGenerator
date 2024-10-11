@@ -165,9 +165,7 @@ class EditorPageState extends State<EditorPage> {
     );
   }
 
-  OnChanged _fieldsChanged([OnChanged? onChanged]) => (fields) {
-        print(fields);
-        setState(() {
+  OnChanged _fieldsChanged([OnChanged? onChanged]) => (fields) => setState(() {
           _symbol.title = fields['title'];
           _symbol.name = fields['name'];
           _symbol.organisation = fields['organisation'];
@@ -175,7 +173,6 @@ class EditorPageState extends State<EditorPage> {
             onChanged(fields);
           }
         });
-      };
 
   SymbolForm _symbolForm() => switch (_symbol) {
         (Unit u) => UnitForm(onChanged: _fieldsChanged((fields) {

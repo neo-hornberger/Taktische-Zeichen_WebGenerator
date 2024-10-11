@@ -22,6 +22,17 @@ class _SettingsPageState extends State<SettingsPage> {
       body: SettingsList(
         sections: [
           SettingsSection(
+            title: const Text('General'),
+            tiles: [
+              SettingsTile.switchTile(
+                title: const Text('Dark Mode'),
+                leading: const Icon(Icons.settings_brightness),
+                initialValue: settings.brightness.value == Brightness.dark,
+                onToggle: (value) => setState(() => settings.brightness.value = value ? Brightness.dark : Brightness.light),
+              ),
+            ],
+          ),
+          SettingsSection(
             title: const Text('Jinja Server'),
             tiles: [
               SettingsTile.switchTile(

@@ -32,18 +32,16 @@ class _MainPageState extends State<MainPage> {
   String? _packageVersion;
   Page _currentPage = Page.editor;
 
-  set _jinjaServer(String url) {
-    setState(() => _jinja = JinjaServer(url));
-  }
+  set _jinjaServer(String url) => setState(() => _jinja = JinjaServer(url));
 
   void _changeBrightness() {
-    final state = context.findAncestorStateOfType<ApplicationState>()!;
-
-    state.brightness = state.brightness == Brightness.dark ? Brightness.light : Brightness.dark;
+    final brightness = context.findAncestorStateOfType<ApplicationState>()!.settings.brightness;
+    brightness.value = brightness.value == Brightness.dark ? Brightness.light : Brightness.dark;
   }
 
   IconData get _brightnessIcon =>
-      context.findAncestorStateOfType<ApplicationState>()!.brightness == Brightness.dark
+      context.findAncestorStateOfType<ApplicationState>()!.settings.brightness.value ==
+              Brightness.dark
           ? Icons.light_mode
           : Icons.dark_mode;
 
@@ -67,7 +65,8 @@ class _MainPageState extends State<MainPage> {
         setState(() => _jinja = JinjaLocal());
       }
     });
-    state.settings.jinjaServerUrl.addListener(() => _jinjaServer = state.settings.jinjaServerUrl.value);
+    state.settings.jinjaServerUrl
+        .addListener(() => _jinjaServer = state.settings.jinjaServerUrl.value);
 
     PackageInfo.fromPlatform().then((info) => setState(() => _packageVersion = info.version));
   }

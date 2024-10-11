@@ -98,16 +98,14 @@ class _LibraryPageState extends State<LibraryPage> {
                     children: _themes.map((theme) {
                       return SimpleDialogOption(
                         onPressed: () {
-                          setState(() {
-                            _theme = theme;
-                          });
+                          setState(() => _theme = theme);
                           Navigator.pop(context);
                         },
                         child: Text(
                           theme,
                           style: TextStyle(
                             inherit: true,
-                            color: theme == _theme ? Theme.of(context).colorScheme.primaryFixedDim : null,
+                            color: theme == _theme ? Theme.of(context).colorScheme.primary : null,
                           ),
                         ),
                       );
