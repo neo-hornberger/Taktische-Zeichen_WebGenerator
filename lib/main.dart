@@ -24,7 +24,14 @@ class ApplicationState extends State<Application> {
   void initState() {
     super.initState();
 
-    settings.brightness.addListener(() => setState(() {}));
+    settings.themeMode.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    settings.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -34,10 +41,20 @@ class ApplicationState extends State<Application> {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF003399),
-          brightness: settings.brightness.value,
+          brightness: Brightness.light,
         ),
+        brightness: Brightness.light,
         useMaterial3: true,
       ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF003399),
+          brightness: Brightness.dark,
+        ),
+        brightness: Brightness.dark,
+        useMaterial3: true
+      ),
+      themeMode: settings.themeMode.value,
       home: const MainPage(title: title),
     );
   }

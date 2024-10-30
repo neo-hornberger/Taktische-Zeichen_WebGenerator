@@ -24,11 +24,18 @@ class _SettingsPageState extends State<SettingsPage> {
           SettingsSection(
             title: const Text('General'),
             tiles: [
-              SettingsTile.switchTile(
-                title: const Text('Dark Mode'),
-                leading: const Icon(Icons.settings_brightness),
-                initialValue: settings.brightness.value == Brightness.dark,
-                onToggle: (value) => setState(() => settings.brightness.value = value ? Brightness.dark : Brightness.light),
+              SettingsTile(
+                title: const Text('Theme Mode'),
+                leading: const Icon(Icons.color_lens),
+                value: Text(_themeModeToString(settings.themeMode.value)),
+                onPressed: (context) => _listDialog(
+                  context,
+                  title: 'Theme Mode',
+                  items: ThemeMode.values,
+                  value: settings.themeMode.value,
+                  onChanged: (value) => setState(() => settings.themeMode.value = value ?? ThemeMode.system),
+                  itemToString: _themeModeToString,
+                ),
               ),
             ],
           ),
@@ -46,10 +53,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: const Text('URL'),
                 leading: const Icon(Icons.link),
                 value: Text(settings.jinjaServerUrl.value),
-                onPressed: (context) => _textInputDialog(context,
-                    title: 'URL',
-                    value: settings.jinjaServerUrl.value,
-                    onSave: (value) => setState(() => settings.jinjaServerUrl.value = value)),
+                onPressed: (context) => _textInputDialog(
+                  context,
+                  title: 'URL',
+                  value: settings.jinjaServerUrl.value,
+                  onSave: (value) => setState(() => settings.jinjaServerUrl.value = value),
+                ),
                 enabled: settings.jinjaServerEnabled.value,
               ),
             ],
@@ -91,5 +100,52 @@ class _SettingsPageState extends State<SettingsPage> {
         ],
       ),
     );
+  }
+
+  void _listDialog<T>(
+    BuildContext context, {
+    required String title,
+    required List<T> items,
+    required T value,
+    void Function(T?)? onChanged,
+    String Function(T)? itemToString,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: items.map((item) {
+            return RadioListTile(
+              title: Text(itemToString?.call(item) ?? item.toString()),
+              value: item,
+              groupValue: value,
+              onChanged: (value) {
+                Navigator.pop(context);
+                onChanged?.call(value);
+              },
+            );
+          }).toList(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _themeModeToString(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.system:
+        return 'Auto';
+      case ThemeMode.light:
+        return 'Light';
+      case ThemeMode.dark:
+        return 'Dark';
+    }
   }
 }

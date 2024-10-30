@@ -37,13 +37,13 @@ class _MainPageState extends State<MainPage> {
   set _jinjaServer(String url) => setState(() => _jinja = JinjaServer(url));
 
   void _changeBrightness() {
-    final brightness = context.findAncestorStateOfType<ApplicationState>()!.settings.brightness;
-    brightness.value = brightness.value == Brightness.dark ? Brightness.light : Brightness.dark;
+    final themeMode = context.findAncestorStateOfType<ApplicationState>()!.settings.themeMode;
+    themeMode.value = themeMode.value != ThemeMode.light ? ThemeMode.light : ThemeMode.dark;
   }
 
   IconData get _brightnessIcon =>
-      context.findAncestorStateOfType<ApplicationState>()!.settings.brightness.value ==
-              Brightness.dark
+      context.findAncestorStateOfType<ApplicationState>()!.settings.themeMode.value ==
+              ThemeMode.dark
           ? Icons.light_mode
           : Icons.dark_mode;
 
@@ -84,40 +84,6 @@ class _MainPageState extends State<MainPage> {
             onPressed: _changeBrightness,
             icon: Icon(_brightnessIcon),
           ),
-          IconButton(
-            onPressed: () => showAboutDialog(
-              context: context,
-              applicationName: widget.title,
-              applicationVersion: _packageVersion ?? 'unknown',
-              applicationLegalese: 'by Neo Hornberger',
-              children: [
-                const SizedBox(height: 16),
-                Text.rich(TextSpan(
-                  children: [
-                    const WidgetSpan(child: Icon(Icons.code)),
-                    const WidgetSpan(child: SizedBox(width: 10)),
-                    TextSpan(
-                      text: repositoryUrl.toString(),
-                      style: const TextStyle(decoration: TextDecoration.underline),
-                      recognizer: TapGestureRecognizer()..onTap = () => launchUrl(repositoryUrl),
-                    ),
-                  ],
-                )),
-                Text.rich(TextSpan(
-                  children: [
-                    const WidgetSpan(child: Icon(Icons.photo_library_outlined)),
-                    const WidgetSpan(child: SizedBox(width: 10)),
-                    TextSpan(
-                      text: libraryUrl.toString(),
-                      style: const TextStyle(decoration: TextDecoration.underline),
-                      recognizer: TapGestureRecognizer()..onTap = () => launchUrl(libraryUrl),
-                    ),
-                  ],
-                )),
-              ],
-            ),
-            icon: const Icon(Icons.info_outline),
-          ),
         ],
       ),
       drawer: Drawer(
@@ -151,6 +117,41 @@ class _MainPageState extends State<MainPage> {
               title: const Text('Settings'),
               leading: const Icon(Icons.settings),
               onTap: _openSettings,
+            ),
+            ListTile(
+              title: const Text('About'),
+              leading: const Icon(Icons.info_outline),
+              onTap: () => showAboutDialog(
+                context: context,
+                applicationName: widget.title,
+                applicationVersion: _packageVersion ?? 'unknown',
+                applicationLegalese: 'by Neo Hornberger',
+                children: [
+                  const SizedBox(height: 16),
+                  Text.rich(TextSpan(
+                    children: [
+                      const WidgetSpan(child: Icon(Icons.code)),
+                      const WidgetSpan(child: SizedBox(width: 10)),
+                      TextSpan(
+                        text: repositoryUrl.toString(),
+                        style: const TextStyle(decoration: TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()..onTap = () => launchUrl(repositoryUrl),
+                      ),
+                    ],
+                  )),
+                  Text.rich(TextSpan(
+                    children: [
+                      const WidgetSpan(child: Icon(Icons.photo_library_outlined)),
+                      const WidgetSpan(child: SizedBox(width: 10)),
+                      TextSpan(
+                        text: libraryUrl.toString(),
+                        style: const TextStyle(decoration: TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()..onTap = () => launchUrl(libraryUrl),
+                      ),
+                    ],
+                  )),
+                ],
+              ),
             ),
           ],
         ),
