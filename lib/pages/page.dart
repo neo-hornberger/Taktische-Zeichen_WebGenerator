@@ -38,14 +38,11 @@ class _MainPageState extends State<MainPage> {
 
   void _changeBrightness() {
     final themeMode = context.findAncestorStateOfType<ApplicationState>()!.settings.themeMode;
-    themeMode.value = themeMode.value != ThemeMode.light ? ThemeMode.light : ThemeMode.dark;
+    themeMode.value = Theme.of(context).brightness != Brightness.light ? ThemeMode.light : ThemeMode.dark;
   }
 
   IconData get _brightnessIcon =>
-      context.findAncestorStateOfType<ApplicationState>()!.settings.themeMode.value ==
-              ThemeMode.dark
-          ? Icons.light_mode
-          : Icons.dark_mode;
+      Theme.of(context).brightness != Brightness.light ? Icons.light_mode : Icons.dark_mode;
 
   @override
   void initState() {
