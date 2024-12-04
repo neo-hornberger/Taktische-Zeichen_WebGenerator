@@ -11,6 +11,7 @@ import '../services/jinja.dart';
 import '../services/jinja/local.dart';
 import '../services/jinja/server.dart';
 import 'editor_page.dart';
+import 'identifier_page.dart';
 import 'library_page.dart';
 import 'settings_page.dart';
 
@@ -38,7 +39,8 @@ class _MainPageState extends State<MainPage> {
 
   void _changeBrightness() {
     final themeMode = context.findAncestorStateOfType<ApplicationState>()!.settings.themeMode;
-    themeMode.value = Theme.of(context).brightness != Brightness.light ? ThemeMode.light : ThemeMode.dark;
+    themeMode.value =
+        Theme.of(context).brightness != Brightness.light ? ThemeMode.light : ThemeMode.dark;
   }
 
   IconData get _brightnessIcon =>
@@ -166,6 +168,9 @@ class _MainPageState extends State<MainPage> {
         Page.library => LibraryPage(
             jinja: _jinja,
           ),
+        Page.identifier => IdentifierPage(
+            jinja: _jinja,
+          ),
       };
 
   FloatingActionButton? _fab() => switch (_currentPage) {
@@ -181,6 +186,7 @@ class _MainPageState extends State<MainPage> {
             child: const Icon(Icons.save),
           ),
         Page.library => null,
+        Page.identifier => null,
       };
 
   void _openSettings() {
@@ -195,7 +201,8 @@ class _MainPageState extends State<MainPage> {
 
 enum Page {
   editor('Editor', Icons.draw_outlined),
-  library('Library', Icons.photo_library_outlined);
+  library('Library', Icons.photo_library_outlined),
+  identifier('Identifier', Icons.image_search_outlined);
 
   const Page(this.title, this.icon);
 

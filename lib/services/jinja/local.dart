@@ -44,6 +44,12 @@ class JinjaLocal extends JinjaService {
 
   @override
   Future<String> buildLibrarySymbol(String symbol, [String? theme]) async => _env.getTemplate(symbol).render();
+
+  @override
+  Future<Iterable<String>> get symbolKeywords async => throw UnimplementedError();
+
+  @override
+  Future<Iterable<String>> getKeywordFilteredSymbols(Iterable<String> keywords) async => throw UnimplementedError();
 }
 
 class AssetLoader extends Loader {

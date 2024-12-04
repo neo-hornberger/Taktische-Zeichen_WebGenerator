@@ -73,28 +73,26 @@ class EditorPageState extends State<EditorPage> {
             child: InitBuilder.arg(
               getter: widget.jinja.preloadTemplates,
               arg: context,
-              builder: (context, future) {
-                return AsyncBuilder(
-                  future: future,
-                  waiting: (context) => const CircularProgressIndicator(),
-                  builder: (context, data) {
-                    if (data == false) {
-                      return _error(context, 'Failed to load templates');
-                    }
+              builder: (context, future) => AsyncBuilder(
+                future: future,
+                waiting: (context) => const CircularProgressIndicator(),
+                builder: (context, data) {
+                  if (data == false) {
+                    return _error(context, 'Failed to load templates');
+                  }
 
-                    return AsyncBuilder(
-                      future: widget.jinja.buildSymbol(_symbol, _symbolScheme),
-                      waiting: (context) => const CircularProgressIndicator(),
-                      builder: (context, data) => SvgPicture.memory(
-                        _source = utf8.encode(data!),
-                        width: MediaQuery.of(context).size.shortestSide / 2.0,
-                        height: MediaQuery.of(context).size.shortestSide / 2.0,
-                      ),
-                      error: (context, error, stackTrace) => _error(context, error.toString()),
-                    );
-                  },
-                );
-              },
+                  return AsyncBuilder(
+                    future: widget.jinja.buildSymbol(_symbol, _symbolScheme),
+                    waiting: (context) => const CircularProgressIndicator(),
+                    builder: (context, data) => SvgPicture.memory(
+                      _source = utf8.encode(data!),
+                      width: MediaQuery.of(context).size.shortestSide / 2.0,
+                      height: MediaQuery.of(context).size.shortestSide / 2.0,
+                    ),
+                    error: (context, error, stackTrace) => _error(context, error.toString()),
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -166,13 +164,13 @@ class EditorPageState extends State<EditorPage> {
   }
 
   OnChanged _fieldsChanged([OnChanged? onChanged]) => (fields) => setState(() {
-          _symbol.title = fields['title'];
-          _symbol.name = fields['name'];
-          _symbol.organisation = fields['organisation'];
-          if (onChanged != null) {
-            onChanged(fields);
-          }
-        });
+        _symbol.title = fields['title'];
+        _symbol.name = fields['name'];
+        _symbol.organisation = fields['organisation'];
+        if (onChanged != null) {
+          onChanged(fields);
+        }
+      });
 
   SymbolForm _symbolForm() => switch (_symbol) {
         (Unit u) => UnitForm(onChanged: _fieldsChanged((fields) {

@@ -120,86 +120,84 @@ class _LibraryPageState extends State<LibraryPage> {
           child: InitBuilder.arg(
             getter: _preloadTemplates,
             arg: context,
-            builder: (context, future) {
-              return AsyncBuilder(
-                future: future,
-                waiting: (context) => const Center(child: CircularProgressIndicator()),
-                builder: (context, data) {
-                  if (data == false) {
-                    return _error(context, 'Failed to load library');
-                  }
+            builder: (context, future) => AsyncBuilder(
+              future: future,
+              waiting: (context) => const Center(child: CircularProgressIndicator()),
+              builder: (context, data) {
+                if (data == false) {
+                  return _error(context, 'Failed to load library');
+                }
 
-                  final Size windowSize = MediaQuery.of(context).size;
-                  final int crossAxisCount = windowSize.width ~/ 175;
-                  final double size = windowSize.width / crossAxisCount;
+                final Size windowSize = MediaQuery.of(context).size;
+                final int crossAxisCount = windowSize.width ~/ 175;
+                final double size = windowSize.width / crossAxisCount;
 
-                  return CustomScrollView(
-                    slivers: [
-                      SliverGrid.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: crossAxisCount,
-                          childAspectRatio: 0.7,
-                        ),
-                        itemCount: _filteredSymbols.length,
-                        itemBuilder: (context, index) {
-                          final symbol = LibrarySymbol.parse(_filteredSymbols.elementAt(index));
-                          Uint8List bytes = Uint8List(0);
+                return CustomScrollView(
+                  slivers: [
+                    SliverGrid.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        childAspectRatio: 0.7,
+                      ),
+                      itemCount: _filteredSymbols.length,
+                      itemBuilder: (context, index) {
+                        final symbol = LibrarySymbol.parse(_filteredSymbols.elementAt(index));
+                        Uint8List bytes = Uint8List(0);
 
-                          return Card(
-                            shape: cardBorder,
-                            child: InkWell(
-                              customBorder: cardBorder,
-                              onTap: () => showDialog(
-                                context: context,
-                                builder: (context) => SaveDialog.fromLibrarySymbol(
-                                  symbol: symbol,
-                                  bytes: bytes,
-                                ),
-                              ),
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                child: Column(
-                                  children: [
-                                    AsyncBuilder(
-                                      future: widget.jinja.buildLibrarySymbol(symbol.path, _theme),
-                                      waiting: (context) => Container(
-                                        padding: EdgeInsets.all(size / 4),
-                                        width: size * 0.8,
-                                        height: size * 0.8,
-                                        child: const CircularProgressIndicator(),
-                                      ),
-                                      builder: (context, symbol) {
-                                        bytes = utf8.encode(symbol!);
-
-                                        return SizedBox(
-                                          width: size * 0.8,
-                                          height: size * 0.8,
-                                          child: SvgPicture.string(symbol),
-                                        );
-                                      },
-                                      error: (context, error, stackTrace) =>
-                                          _error(context, 'Failed to load symbol', size / 2),
-                                    ),
-                                    Text(
-                                      symbol.category,
-                                      style: Theme.of(context).textTheme.labelSmall,
-                                    ),
-                                    Text(
-                                      symbol.name,
-                                      style: Theme.of(context).textTheme.titleMedium,
-                                    ),
-                                  ],
-                                ),
+                        return Card(
+                          shape: cardBorder,
+                          child: InkWell(
+                            customBorder: cardBorder,
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (context) => SaveDialog.fromLibrarySymbol(
+                                symbol: symbol,
+                                bytes: bytes,
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              child: Column(
+                                children: [
+                                  AsyncBuilder(
+                                    future: widget.jinja.buildLibrarySymbol(symbol.path, _theme),
+                                    waiting: (context) => Container(
+                                      padding: EdgeInsets.all(size / 4),
+                                      width: size * 0.8,
+                                      height: size * 0.8,
+                                      child: const CircularProgressIndicator(),
+                                    ),
+                                    builder: (context, symbol) {
+                                      bytes = utf8.encode(symbol!);
+
+                                      return SizedBox(
+                                        width: size * 0.8,
+                                        height: size * 0.8,
+                                        child: SvgPicture.string(symbol),
+                                      );
+                                    },
+                                    error: (context, error, stackTrace) =>
+                                        _error(context, 'Failed to load symbol', size / 2),
+                                  ),
+                                  Text(
+                                    symbol.category,
+                                    style: Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                  Text(
+                                    symbol.name,
+                                    style: Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ],

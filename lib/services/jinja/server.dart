@@ -89,12 +89,42 @@ class JinjaServer extends JinjaService {
 
     return utf8.decode(resp.bodyBytes);
   }
+
+  @override
+  Future<Iterable<String>> get symbolKeywords async {
+    final resp = await http.get(_baseUrl.resolve('keywords'));
+
+    if (resp.statusCode != 200) {
+      throw resp.body;
+    }
+
+    return (json.decode(resp.body) as Iterable).whereType<String>();
+  }
+
+  @override
+  Future<Iterable<String>> getKeywordFilteredSymbols(Iterable<String> keywords) async {
+    final params = urlParameters({
+      'filter': keywords,
+    });
+    final resp = await http.get(_baseUrl.resolve('identify?$params'));
+
+    if (resp.statusCode != 200) {
+      throw resp.body;
+    }
+
+    return (json.decode(resp.body) as Iterable).whereType<String>();
+  }
 }
 
 String urlParameters(Map<String, dynamic> params) {
   return params.entries
       .where((entry) => entry.value != null)
-      .map((entry) =>
-          '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(entry.value.toString())}')
+      .expand((entry) {
+        if (entry.value is Iterable) {
+          return (entry.value as Iterable).map((e) => '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(e.toString())}');
+        }
+        
+        return ['${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(entry.value.toString())}'];
+      })
       .join('&');
 }

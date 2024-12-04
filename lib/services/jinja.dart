@@ -9,6 +9,8 @@ abstract class JinjaService {
   Future<Iterable<String>> get librarySymbols;
   Future<Iterable<String>> get libraryThemes;
   Future<String> buildLibrarySymbol(String symbol, [String? theme]);
+  Future<Iterable<String>> get symbolKeywords;
+  Future<Iterable<String>> getKeywordFilteredSymbols(Iterable<String> keywords);
 }
 
 Map<String, dynamic> extractOptions(Symbol symbol) {
