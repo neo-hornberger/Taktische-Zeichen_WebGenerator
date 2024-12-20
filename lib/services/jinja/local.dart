@@ -62,7 +62,7 @@ class JinjaLocal extends JinjaService {
   Future<Iterable<String>> getKeywordFilteredSymbols(Iterable<String> keywords) async => throw UnimplementedError();
 
   @override
-  Future<Uint8List> convertToImage(Uint8List svg, RenderType renderType) async {
+  Future<Uint8List> convertToImage(Uint8List svg, RenderType renderType, int renderSize) async {
     if (renderType == RenderType.svg) {
       return svg;
     }

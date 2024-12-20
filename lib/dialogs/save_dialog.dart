@@ -121,7 +121,7 @@ class _SaveDialogState extends State<SaveDialog> {
           onPressed: () async {
             Uint8List bytes = widget.bytes;
             if (_renderType != RenderType.svg) {
-              bytes = await widget.jinja.convertToImage(widget.bytes, _renderType);
+              bytes = await widget.jinja.convertToImage(widget.bytes, _renderType, _renderSize);
             }
 
             saveFile(

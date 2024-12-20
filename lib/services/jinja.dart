@@ -13,7 +13,7 @@ abstract class JinjaService {
   Future<String> buildLibrarySymbol(String symbol, [String? theme, RenderType renderType]);
   Future<Iterable<String>> get symbolKeywords;
   Future<Iterable<String>> getKeywordFilteredSymbols(Iterable<String> keywords);
-  Future<Uint8List> convertToImage(Uint8List svg, RenderType renderType);
+  Future<Uint8List> convertToImage(Uint8List svg, RenderType renderType, int renderSize);
 }
 
 enum RenderType {

@@ -119,9 +119,10 @@ class JinjaServer extends JinjaService {
   }
 
   @override
-  Future<Uint8List> convertToImage(Uint8List svg, RenderType renderType) async {
+  Future<Uint8List> convertToImage(Uint8List svg, RenderType renderType, int renderSize) async {
     final params = urlParameters({
       'render_type': renderType.name,
+      'render_size': renderSize,
     });
     final resp = await http.post(
       _baseUrl.resolve('convert?$params'),
