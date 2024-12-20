@@ -11,6 +11,7 @@ import '../services/jinja.dart';
 import '../services/jinja/local.dart';
 import '../services/jinja/server.dart';
 import 'editor_page.dart';
+import 'home_page.dart';
 import 'identifier_page.dart';
 import 'library_page.dart';
 import 'settings_page.dart';
@@ -33,7 +34,7 @@ class _MainPageState extends State<MainPage> {
 
   late JinjaService _jinja;
   String? _packageVersion;
-  Page _currentPage = Page.editor;
+  Page? _currentPage;
 
   set _jinjaServer(String url) => setState(() => _jinja = JinjaServer(url));
 
@@ -100,14 +101,22 @@ class _MainPageState extends State<MainPage> {
                 ],
               ),
             ),
+            ListTile(
+              title: const Text('Home'),
+              leading: const Icon(Icons.home),
+              selected: _currentPage == null,
+              onTap: () {
+                setState(() => _currentPage = null);
+                Navigator.pop(context);
+              },
+            ),
+            const Divider(),
             ...Page.values.map((page) => ListTile(
                   title: Text(page.title),
                   leading: Icon(page.icon),
                   selected: _currentPage == page,
                   onTap: () {
-                    setState(() {
-                      _currentPage = page;
-                    });
+                    setState(() => _currentPage = page);
                     Navigator.pop(context);
                   },
                 )),
@@ -161,6 +170,9 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _page() => switch (_currentPage) {
+        null => HomePage(
+            onNavigate: (page) => setState(() => _currentPage = page),
+          ),
         Page.editor => EditorPage(
             key: _editorKey,
             jinja: _jinja,
@@ -174,6 +186,7 @@ class _MainPageState extends State<MainPage> {
       };
 
   FloatingActionButton? _fab() => switch (_currentPage) {
+        null => null,
         Page.editor => FloatingActionButton(
             onPressed: () => showDialog(
               context: context,

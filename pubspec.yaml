@@ -1,7 +1,7 @@
 name: taktische_zeichen
 description: "Taktische Zeichen WebGenerator"
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.4.1
+version: 1.4.2
 
 environment:
   sdk: '>=3.4.1 <4.0.0'
