@@ -19,7 +19,11 @@ class JinjaLocal extends JinjaService {
       await (_env.loader as AssetLoader).preload(DefaultAssetBundle.of(context));
 
   @override
-  Future<String> buildSymbol(Symbol symbol, SymbolColorScheme scheme) async {
+  Future<String> buildSymbol(Symbol symbol, SymbolColorScheme scheme, [RenderType renderType = RenderType.svg]) async {
+    if (renderType != RenderType.svg) {
+      throw UnimplementedError();
+    }
+
     String template = switch (symbol) {
       Unit() => 'einheit',
       Vehicle(vehicleType: VehicleType.boot) => 'boot',
@@ -43,13 +47,28 @@ class JinjaLocal extends JinjaService {
   Future<Iterable<String>> get libraryThemes async => throw UnimplementedError();
 
   @override
-  Future<String> buildLibrarySymbol(String symbol, [String? theme]) async => _env.getTemplate(symbol).render();
+  Future<String> buildLibrarySymbol(String symbol, [String? theme, RenderType renderType = RenderType.svg]) async {
+    if (renderType != RenderType.svg) {
+      throw UnimplementedError();
+    }
+
+    return _env.getTemplate(symbol).render();
+  }
 
   @override
   Future<Iterable<String>> get symbolKeywords async => throw UnimplementedError();
 
   @override
   Future<Iterable<String>> getKeywordFilteredSymbols(Iterable<String> keywords) async => throw UnimplementedError();
+
+  @override
+  Future<Uint8List> convertToImage(Uint8List svg, RenderType renderType) async {
+    if (renderType == RenderType.svg) {
+      return svg;
+    }
+
+    throw UnimplementedError();
+  }
 }
 
 class AssetLoader extends Loader {

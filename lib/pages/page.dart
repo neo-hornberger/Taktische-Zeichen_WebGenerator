@@ -180,6 +180,7 @@ class _MainPageState extends State<MainPage> {
               builder: (context) => SaveDialog.fromSymbol(
                 symbol: _editorKey.currentState!.symbol,
                 bytes: Uint8List.fromList(_editorKey.currentState!.source!),
+                jinja: _jinja,
               ),
             ),
             tooltip: 'Save',

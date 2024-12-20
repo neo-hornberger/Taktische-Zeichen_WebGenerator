@@ -153,6 +153,7 @@ class _LibraryPageState extends State<LibraryPage> {
                               builder: (context) => SaveDialog.fromLibrarySymbol(
                                 symbol: symbol,
                                 bytes: bytes,
+                                jinja: widget.jinja,
                               ),
                             ),
                             child: Container(

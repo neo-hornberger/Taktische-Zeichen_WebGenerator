@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -48,7 +49,7 @@ class JinjaServer extends JinjaService {
   }
 
   @override
-  Future<String> buildSymbol(Symbol symbol, SymbolColorScheme scheme) async {
+  Future<String> buildSymbol(Symbol symbol, SymbolColorScheme scheme, [RenderType renderType = RenderType.svg]) async {
     String template = switch (symbol) {
       Unit() => 'unit',
       Vehicle(vehicleType: VehicleType.boot) => 'boat',
@@ -66,6 +67,7 @@ class JinjaServer extends JinjaService {
       ...extractOptions(symbol),
       'template': template,
       'scheme': json.encode(scheme),
+      'render_type': renderType.name,
     });
     final resp = await http.get(_baseUrl.resolve('build?$params'));
 
@@ -76,10 +78,11 @@ class JinjaServer extends JinjaService {
   }
 
   @override
-  Future<String> buildLibrarySymbol(String symbol, [String? theme]) async {
+  Future<String> buildLibrarySymbol(String symbol, [String? theme, RenderType renderType = RenderType.svg]) async {
     final params = urlParameters({
       'symbol': symbol,
       'theme': theme,
+      'render_type': renderType.name,
     });
     final resp = await http.get(_baseUrl.resolve('library?$params'));
 
@@ -113,6 +116,26 @@ class JinjaServer extends JinjaService {
     }
 
     return (json.decode(resp.body) as Iterable).whereType<String>();
+  }
+
+  @override
+  Future<Uint8List> convertToImage(Uint8List svg, RenderType renderType) async {
+    final params = urlParameters({
+      'render_type': renderType.name,
+    });
+    final resp = await http.post(
+      _baseUrl.resolve('convert?$params'),
+      body: svg,
+      headers: {
+        'Content-Type': 'image/svg+xml',
+      },
+    );
+
+    if (resp.statusCode != 200) {
+      throw resp.body;
+    }
+
+    return resp.bodyBytes;
   }
 }
 

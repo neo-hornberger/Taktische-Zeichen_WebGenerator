@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import '../models/symbol.dart';
@@ -5,12 +7,24 @@ import '../models/theme.dart';
 
 abstract class JinjaService {
   Future<bool> preloadTemplates(BuildContext context);
-  Future<String> buildSymbol(Symbol symbol, SymbolColorScheme scheme);
+  Future<String> buildSymbol(Symbol symbol, SymbolColorScheme scheme, [RenderType renderType]);
   Future<Iterable<String>> get librarySymbols;
   Future<Iterable<String>> get libraryThemes;
-  Future<String> buildLibrarySymbol(String symbol, [String? theme]);
+  Future<String> buildLibrarySymbol(String symbol, [String? theme, RenderType renderType]);
   Future<Iterable<String>> get symbolKeywords;
   Future<Iterable<String>> getKeywordFilteredSymbols(Iterable<String> keywords);
+  Future<Uint8List> convertToImage(Uint8List svg, RenderType renderType);
+}
+
+enum RenderType {
+  svg('image/svg+xml', 'svg'),
+  png('image/png', 'png'),
+  jpeg('image/jpeg', 'jpg');
+
+  const RenderType(this.mimeType, this.fileExtension);
+
+  final String mimeType;
+  final String fileExtension;
 }
 
 Map<String, dynamic> extractOptions(Symbol symbol) {
