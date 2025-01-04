@@ -19,7 +19,10 @@ class IdentifierPage extends StatefulWidget {
 }
 
 class _IdentifierPageState extends State<IdentifierPage> {
+  final GlobalKey<State<SearchBar>> _searchBarKey = GlobalKey();
+
   Iterable<String> _availableKeywords = [];
+  Iterable<String> _filteredKeywords = [];
 
   final Set<String> _filters = {};
 
@@ -28,18 +31,76 @@ class _IdentifierPageState extends State<IdentifierPage> {
   late TextEditingController _searchBarController;
   late FocusNode _searchFocusNode;
 
+  OverlayEntry? _filterMenu;
+
   Future<bool> _preloadTemplates(BuildContext context) async {
     final result = await widget.jinja.preloadTemplates(context);
 
     if (result) {
-      final keywords = await widget.jinja.symbolKeywords;
+      final keywords = (await widget.jinja.symbolKeywords).toList();
+      keywords.sort();
 
-      setState(() {
-        _availableKeywords = keywords;
-      });
+      setState(() => _availableKeywords = keywords);
     }
 
     return result;
+  }
+
+  void _openFilterMenu(String value) {
+    _filteredKeywords =
+        _availableKeywords.where((keyword) => keyword.toLowerCase().contains(value.toLowerCase()));
+
+    if (_filterMenu != null) {
+      _closeFilterMenu();
+    }
+
+    final renderObject = _searchBarKey.currentContext!.findRenderObject()!;
+    final translation = renderObject.getTransformTo(null).getTranslation();
+    final top = translation.y + renderObject.semanticBounds.height + 8;
+
+    _filterMenu = OverlayEntry(
+      builder: (context) {
+        return Positioned(
+          left: translation.x,
+          top: top,
+          width: renderObject.semanticBounds.width,
+          child: LimitedBox(
+            maxHeight: MediaQuery.of(context).size.height - top - 8,
+            child: Material(
+              elevation: 8.0,
+              color: Theme.of(context).colorScheme.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(16.0),
+              clipBehavior: Clip.antiAlias,
+              child: ListView(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                children: [
+                  for (final keyword in _filteredKeywords)
+                    ListTile(
+                      title: Text(keyword),
+                      onTap: () {
+                        setState(() => _filters.add(keyword));
+
+                        _closeFilterMenu();
+                        _searchBarController.clear();
+                        _searchFocusNode.requestFocus();
+                      },
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    Overlay.of(context).insert(_filterMenu!);
+  }
+
+  void _closeFilterMenu() {
+    _filterMenu?.remove();
+    _filterMenu?.dispose();
+    _filterMenu = null;
   }
 
   @override
@@ -48,12 +109,19 @@ class _IdentifierPageState extends State<IdentifierPage> {
 
     _searchBarController = TextEditingController();
     _searchFocusNode = FocusNode();
+    _searchFocusNode.addListener(() {
+      if (!_searchFocusNode.hasFocus) {
+        print('Focus lost');
+        //_closeFilterMenu();
+      }
+    });
   }
 
   @override
   void dispose() {
     _searchBarController.dispose();
     _searchFocusNode.dispose();
+    _closeFilterMenu();
 
     super.dispose();
   }
@@ -71,12 +139,20 @@ class _IdentifierPageState extends State<IdentifierPage> {
                 children: [
                   Expanded(
                     child: SearchBar(
+                      key: _searchBarKey,
                       controller: _searchBarController,
                       focusNode: _searchFocusNode,
                       leading: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: searchBoxPadding),
                         child: Icon(Icons.search),
                       ),
+                      onChanged: (value) {
+                        value = value.trim();
+
+                        if (value.isNotEmpty) {
+                          _openFilterMenu(value);
+                        }
+                      },
                       onSubmitted: (value) {
                         value = value.trim();
 
@@ -102,7 +178,6 @@ class _IdentifierPageState extends State<IdentifierPage> {
                     constraints: const BoxConstraints(minWidth: 56.0, minHeight: 56.0),
                     onPressed: () {
                       setState(() => _filters.clear());
-
                       _searchFocusNode.requestFocus();
                     },
                   ),
@@ -119,7 +194,6 @@ class _IdentifierPageState extends State<IdentifierPage> {
                     constraints: const BoxConstraints(minWidth: 56.0, minHeight: 56.0),
                     onPressed: () {
                       setState(() => _showFilterRow = !_showFilterRow);
-
                       _searchFocusNode.requestFocus();
                     },
                   ),
@@ -138,7 +212,6 @@ class _IdentifierPageState extends State<IdentifierPage> {
                           backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
                           onDeleted: () {
                             setState(() => _filters.remove(filter));
-
                             _searchFocusNode.requestFocus();
                           },
                         ),
